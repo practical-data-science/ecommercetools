@@ -1,0 +1,6 @@
+.idea/
+build/
+dist/
+ecommercetools.egg-info
+google-search-console.json
+example.py

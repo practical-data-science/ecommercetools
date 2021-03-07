@@ -1,0 +1,1 @@
+from ecommercetools.operations.operations import get_inventory_classification
