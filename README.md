@@ -1,8 +1,10 @@
 # EcommerceTools
 
-EcommerceTools is a data science toolkit for those working in technical ecommerce, marketing science, and technical seo. 
+![EcommerceTools](banner.jpg "Title")
 
-The package is designed to be used with Pandas and works within a Jupyter notebook environment or in standalone projects. 
+EcommerceTools is a data science toolkit for those working in technical ecommerce, marketing science, and technical seo and includes a wide range of features to aid analysis and model building. 
+
+The package is written in Python and is designed to be used with Pandas and works within a Jupyter notebook environment or in standalone Python projects. 
 
 #### Installation
 
