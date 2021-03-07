@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import operator as op
 from ecommercetools.transactions import transactions
-from ecommercetools.utilities import tools
+from ecommercetools import utilities
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 
@@ -276,3 +276,115 @@ def get_cohort_matrix(df, period='M', percentage=False):
         df = df.divide(df.iloc[:, 0], axis=0)
 
     return df
+
+
+def _days_to_next_order(avg_latency, std_latency, recency):
+    """Estimate the number of days to a customer's next order using latency.
+
+    Args:
+        avg_latency (float): Average latency in days
+        std_latency (float): Standard deviation of latency in days
+        recency (float): Recency in days
+    Returns:
+        Approximate number of days until the next order.
+    """
+
+    return avg_latency - (recency - std_latency)
+
+
+def _latency_label_customers(avg_latency, std_latency, recency):
+    """Add a label to describe a customer's latency metric.
+
+    Args:
+        avg_latency (float): Average latency in days
+        std_latency (float): Standard deviation of latency in days
+        recency (float): Recency in days
+    Returns:
+           Label describing the latency metric in relation to the customer.
+    """
+
+    days_to_next_order_upper = avg_latency - (recency - std_latency)
+    days_to_next_order_lower = avg_latency - (recency + std_latency)
+
+    if recency < days_to_next_order_lower:
+        return 'Order not due'
+
+    elif (recency <= days_to_next_order_lower) or (recency <= days_to_next_order_upper):
+        return 'Order due soon'
+
+    elif recency > days_to_next_order_upper:
+        return 'Order overdue'
+
+    else:
+        return 'Not sure'
+
+
+def get_latency(df_transactions):
+    """Return a Pandas dataframe containing latency metrics for each customer.
+
+    Args:
+        df_transactions: Pandas dataframe from get_transactions().
+
+    Returns:
+        Pandas dataframe of customer purchase latency metrics.
+    """
+
+    # Create latency dataframe and calculate granular metrics
+    df_latency = df_transactions[['order_id', 'customer_id', 'order_date', 'revenue']]
+    df_latency = df_latency[df_latency['revenue'] > 0]
+    df_latency = df_latency.sort_values(by=['order_date'], ascending=False)
+    df_latency['prev_order_date'] = utilities.get_previous_value(df_latency, 'customer_id', 'order_date')
+    df_latency['days_since_prev_order'] = utilities.get_days_since_date(df_latency, 'prev_order_date', 'order_date')
+    df_latency['order_number'] = utilities.get_cumulative_count(df_latency, 'customer_id', 'order_id', 'order_date')
+
+    # Create customer dataframe and calculate aggregate metrics
+    df_customers = pd.DataFrame(df_latency['customer_id'].unique())
+    df_customers.columns = ['customer_id']
+
+    # Calculate frequency
+    df_frequency = df_latency.groupby('customer_id')['order_id'].nunique().reset_index()
+    df_frequency.columns = ['customer_id', 'frequency']
+    df_customers = df_customers.merge(df_frequency, on='customer_id')
+
+    # Calculate recency
+    df_recency = df_latency.groupby('customer_id')['order_date'].max().reset_index()
+    df_recency.columns = ['customer_id', 'recency_date']
+    df_customers = df_customers.merge(df_recency, on='customer_id')
+    df_customers['recency'] = round((pd.to_datetime('today') - df_customers['recency_date']) \
+                                    / np.timedelta64(1, 'D')).astype(int)
+
+    # Calculate average latency
+    df_avg_latency = df_latency.groupby('customer_id')['days_since_prev_order'].mean().astype(int).reset_index()
+    df_avg_latency.columns = ['customer_id', 'avg_latency']
+    df_customers = df_customers.merge(df_avg_latency, on='customer_id')
+
+    # Calculate standard deviation of latency for returning customers
+    df_latency_returning = df_latency[df_latency['order_number'] > 0]
+
+    # Min latency
+    df_min = df_latency_returning.groupby('customer_id')['days_since_prev_order'].min().astype(int).reset_index()
+    df_min.columns = ['customer_id', 'min_latency']
+    df_customers = df_customers.merge(df_min, on='customer_id')
+
+    # Max latency
+    df_max = df_latency_returning.groupby('customer_id')['days_since_prev_order'].max().astype(int).reset_index()
+    df_max.columns = ['customer_id', 'max_latency']
+    df_customers = df_customers.merge(df_max, on='customer_id')
+
+    # STD latency
+    df_std = df_latency_returning.groupby('customer_id')['days_since_prev_order'].std().reset_index()
+    df_std.columns = ['customer_id', 'std_latency']
+    df_customers = df_customers.merge(df_std, on='customer_id')
+
+    # Coefficient of Variation of latency
+    df_customers['cv'] = df_customers['std_latency'] / df_customers['avg_latency']
+
+    # Calculate approximate days to next order
+    df_customers['days_to_next_order'] = df_customers.apply(
+        lambda x: _days_to_next_order(x['avg_latency'], x['std_latency'], x['recency']), axis=1).round()
+
+    # Label latency
+    df_customers['label'] = df_customers.apply(
+        lambda x: _latency_label_customers(x['avg_latency'], x['std_latency'], x['recency']), axis=1)
+
+    return df_customers

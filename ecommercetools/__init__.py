@@ -1,4 +1,4 @@
-__version__ = "0.1.0"
+__version__ = "0.2.1"
 __author__ = "Matt Clarke"
 
 from ecommercetools.utilities.tools import load_transaction_items
