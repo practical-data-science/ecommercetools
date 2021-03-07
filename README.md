@@ -1,6 +1,6 @@
 # EcommerceTools
 
-![EcommerceTools](banner.jpg "Title")
+![EcommerceTools](https://github.com/practical-data-science/ecommercetools/blob/master/banner.png?raw=true "EcommerceTools")
 
 EcommerceTools is a data science toolkit for those working in technical ecommerce, marketing science, and technical seo and includes a wide range of features to aid analysis and model building. 
 
