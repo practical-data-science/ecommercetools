@@ -36,7 +36,6 @@ def get_products(transaction_items, days=None):
     return products
 
 
-
 def get_repurchase_rate_label(df):
     """Add a label describing the repurchase rate bin.
 
