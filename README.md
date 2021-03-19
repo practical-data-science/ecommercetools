@@ -1537,6 +1537,164 @@ rfm_df.head()
   </tbody>
 </table>
 
+
+#### 6. Create a purchase latency dataset
+
+
+```python
+from ecommercetools import customers 
+
+latency_df = customers.get_latency(transactions_df)
+latency_df.head()
+```
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>customer_id</th>
+      <th>frequency</th>
+      <th>recency_date</th>
+      <th>recency</th>
+      <th>avg_latency</th>
+      <th>min_latency</th>
+      <th>max_latency</th>
+      <th>std_latency</th>
+      <th>cv</th>
+      <th>days_to_next_order</th>
+      <th>label</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>12680.0</td>
+      <td>4</td>
+      <td>2011-12-09 12:50:00</td>
+      <td>3388</td>
+      <td>28</td>
+      <td>16</td>
+      <td>73</td>
+      <td>30.859898</td>
+      <td>1.102139</td>
+      <td>-3329.0</td>
+      <td>Order overdue</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>13113.0</td>
+      <td>24</td>
+      <td>2011-12-09 12:49:00</td>
+      <td>3388</td>
+      <td>15</td>
+      <td>0</td>
+      <td>52</td>
+      <td>12.060126</td>
+      <td>0.804008</td>
+      <td>-3361.0</td>
+      <td>Order overdue</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>15804.0</td>
+      <td>13</td>
+      <td>2011-12-09 12:31:00</td>
+      <td>3388</td>
+      <td>15</td>
+      <td>1</td>
+      <td>39</td>
+      <td>11.008261</td>
+      <td>0.733884</td>
+      <td>-3362.0</td>
+      <td>Order overdue</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>13777.0</td>
+      <td>33</td>
+      <td>2011-12-09 12:25:00</td>
+      <td>3388</td>
+      <td>11</td>
+      <td>0</td>
+      <td>48</td>
+      <td>12.055274</td>
+      <td>1.095934</td>
+      <td>-3365.0</td>
+      <td>Order overdue</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>17581.0</td>
+      <td>25</td>
+      <td>2011-12-09 12:21:00</td>
+      <td>3388</td>
+      <td>14</td>
+      <td>0</td>
+      <td>67</td>
+      <td>21.974293</td>
+      <td>1.569592</td>
+      <td>-3352.0</td>
+      <td>Order overdue</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+#### 7. Customer ABC segmentation
+
+```python
+from ecommercetools import customers
+
+abc_df = customers.get_abc_segments(customers_df, months=12, abc_class_name='abc_class_12m', abc_rank_name='abc_rank_12m')
+abc_df.head()
+```
+
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>customer_id</th>
+      <th>abc_class_12m</th>
+      <th>abc_rank_12m</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>12346.0</td>
+      <td>D</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>12347.0</td>
+      <td>D</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>12348.0</td>
+      <td>D</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>12349.0</td>
+      <td>D</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>12350.0</td>
+      <td>D</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+
+
 ---
 
 ### Advertising
