@@ -1375,8 +1375,107 @@ inventory_classification.head()
 </table>
 
 
+---
+### Marketing
+
+#### 1. Get ecommerce trading calendar
+
+```python
+from ecommercetools import marketing
+
+trading_calendar_df = marketing.get_trading_calendar('2021-01-01', days=365)
+trading_calendar_df.head()
+```
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>event</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2021-01-01</td>
+      <td>January sale</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2021-01-02</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2021-01-03</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2021-01-04</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2021-01-05</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
 
 
+#### 2. Get ecommerce trading events
+
+
+```python
+from ecommercetools import marketing
+
+trading_events_df = marketing.get_trading_events('2021-01-01', days=365)
+trading_events_df.head()
+```
+
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>date</th>
+      <th>event</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2021-01-01</td>
+      <td>January sale</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2021-01-29</td>
+      <td>January Pay Day</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2021-02-11</td>
+      <td>Valentine's Day [last order date]</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2021-02-14</td>
+      <td>Valentine's Day</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2021-02-26</td>
+      <td>February Pay Day</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+---
 
 ### SEO
 
