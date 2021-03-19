@@ -10,483 +10,6 @@ You can install EcommerceTools and its dependencies via PyPi by entering `pip3 i
 
 ---
 
-### SEO
-
-#### 1. Discover XML sitemap locations
-The `get_sitemaps()` function takes the location of a `robots.txt` file (always stored at the root of a domain), and returns the URLs of any XML sitemaps listed within. 
-
-```python
-from ecommercetools import seo
-
-sitemaps = seo.get_sitemaps("http://www.flyandlure.org/robots.txt")
-print(sitemaps)
-
-```
-
-#### 2. Get an XML sitemap
-The `get_dataframe()` function allows you to download the URLs in an XML sitemap to a Pandas dataframe. If the sitemap contains child sitemaps, each of these will be retrieved. You can save the Pandas dataframe to CSV in the usual way. 
-
-```python
-from ecommercetools import seo
-
-df = seo.get_sitemap("http://flyandlure.org/sitemap.xml")
-print(df.head())
-```
-
-
-<table>
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>loc</th>
-      <th>changefreq</th>
-      <th>priority</th>
-      <th>domain</th>
-      <th>sitemap_name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>http://flyandlure.org/</td>
-      <td>hourly</td>
-      <td>1.0</td>
-      <td>flyandlure.org</td>
-      <td>http://www.flyandlure.org/sitemap.xml</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>http://flyandlure.org/about</td>
-      <td>monthly</td>
-      <td>1.0</td>
-      <td>flyandlure.org</td>
-      <td>http://www.flyandlure.org/sitemap.xml</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>http://flyandlure.org/terms</td>
-      <td>monthly</td>
-      <td>1.0</td>
-      <td>flyandlure.org</td>
-      <td>http://www.flyandlure.org/sitemap.xml</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>http://flyandlure.org/privacy</td>
-      <td>monthly</td>
-      <td>1.0</td>
-      <td>flyandlure.org</td>
-      <td>http://www.flyandlure.org/sitemap.xml</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>http://flyandlure.org/copyright</td>
-      <td>monthly</td>
-      <td>1.0</td>
-      <td>flyandlure.org</td>
-      <td>http://www.flyandlure.org/sitemap.xml</td>
-    </tr>
-  </tbody>
-</table>
-
-
-##### 3. Get Core Web Vitals from PageSpeed Insights
-The `get_core_web_vitals()` function retrieves the Core Web Vitals metrics for a list of sites from the Google PageSpeed Insights API and returns results in a Pandas dataframe. The function requires a a Google PageSpeed Insights API key. 
-
-```python
-from ecommercetools import seo
-
-pagespeed_insights_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-urls = ['https://www.bbc.co.uk', 'https://www.bbc.co.uk/iplayer']
-df = seo.get_core_web_vitals(pagespeed_insights_key, urls)
-print(df.head())
-```
-
-#### 4. Get Google Knowledge Graph data
-The `get_knowledge_graph()` function returns the Google Knowledge Graph data for a given search term. This requires the use of a Google Knowledge Graph API key. By default, the function returns output in a Pandas dataframe, but you can pass the `output="json"` argument if you wish to receive the JSON data back. 
-
-```python
-from ecommercetools import seo
-
-knowledge_graph_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-knowledge_graph = seo.get_knowledge_graph(knowledge_graph_key, "tesla", output="dataframe")
-print(knowledge_graph)
-```
-
-#### 5. Get Google Search Console API data
-The `query_google_search_console()` function runs a search query on the Google Search Console API and returns data in a Pandas dataframe. This function requires a JSON client secrets key with access to the Google Search Console API. 
-
-```python
-from ecommercetools import seo
-
-key = "google-search-console.json"
-site_url = "http://flyandlure.org"
-payload = {
-    'startDate': "2019-01-01",
-    'endDate': "2019-12-31",
-    'dimensions': ["page", "device", "query"],
-    'rowLimit': 100,
-    'startRow': 0
-}
-
-df = seo.query_google_search_console(key, site_url, payload)
-print(df.head())
-
-```
-
-
-
-
-<table>
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>page</th>
-      <th>device</th>
-      <th>query</th>
-      <th>clicks</th>
-      <th>impressions</th>
-      <th>ctr</th>
-      <th>position</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>http://flyandlure.org/articles/fly_fishing_gea...</td>
-      <td>MOBILE</td>
-      <td>simms freestone waders review</td>
-      <td>56</td>
-      <td>217</td>
-      <td>25.81</td>
-      <td>3.12</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>http://flyandlure.org/</td>
-      <td>MOBILE</td>
-      <td>fly and lure</td>
-      <td>37</td>
-      <td>159</td>
-      <td>23.27</td>
-      <td>3.81</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>http://flyandlure.org/articles/fly_fishing_gea...</td>
-      <td>DESKTOP</td>
-      <td>orvis encounter waders review</td>
-      <td>35</td>
-      <td>134</td>
-      <td>26.12</td>
-      <td>4.04</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>http://flyandlure.org/articles/fly_fishing_gea...</td>
-      <td>DESKTOP</td>
-      <td>simms freestone waders review</td>
-      <td>35</td>
-      <td>200</td>
-      <td>17.50</td>
-      <td>3.50</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>http://flyandlure.org/</td>
-      <td>DESKTOP</td>
-      <td>fly and lure</td>
-      <td>32</td>
-      <td>170</td>
-      <td>18.82</td>
-      <td>3.09</td>
-    </tr>
-  </tbody>
-</table>
-
-
-#### 6. Get the number of "indexed" pages
-The `get_indexed_pages()` function uses the "site:" prefix to search Google for the number of pages "indexed". This is very approximate and may not be a perfect representation, but it's usually a good guide of site "size" in the absence of other data. 
-
-```python
-from ecommercetools import seo
-
-urls = ['https://www.bbc.co.uk', 'https://www.bbc.co.uk/iplayer', 'http://flyandlure.org']
-df = seo.get_indexed_pages(urls)
-print(df.head())
-```
-
-<table>
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>url</th>
-      <th>indexed_pages</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>2</th>
-      <td>http://flyandlure.org</td>
-      <td>2090</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>https://www.bbc.co.uk/iplayer</td>
-      <td>215000</td>
-    </tr>
-    <tr>
-      <th>0</th>
-      <td>https://www.bbc.co.uk</td>
-      <td>12700000</td>
-    </tr>
-  </tbody>
-</table>
-
-
-##### 7. Get keyword suggestions from Google Autocomplete
-The `google_autocomplete()` function returns a set of keyword suggestions from Google Autocomplete. The `include_expanded=True` argument allows you to expand the number of suggestions shown by appending prefixes and suffixes to the search terms. 
-
-```python
-from ecommercetools import seo
-
-suggestions = seo.google_autocomplete("data science", include_expanded=False)
-print(suggestions)
-
-suggestions = seo.google_autocomplete("data science", include_expanded=True)
-print(suggestions)
-```
-
-<table>
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>term</th>
-      <th>relevance</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>data science jobs</td>
-      <td>650</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>data science jobs chester</td>
-      <td>601</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>data science course</td>
-      <td>600</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>data science masters</td>
-      <td>554</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>data science salary</td>
-      <td>553</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>data science internship</td>
-      <td>552</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>data science jobs london</td>
-      <td>551</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>data science graduate scheme</td>
-      <td>550</td>
-    </tr>
-  </tbody>
-</table>
-
-#### 8. Retrieve robots.txt content
-The `get_robots()` function returns the contents of a robots.txt file in a Pandas dataframe so it can be parsed and analysed. 
-
-```python
-from ecommercetools import seo
-
-robots = seo.get_robots("http://www.flyandlure.org/robots.txt")
-print(robots)
-```
-
-<table>
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>directive</th>
-      <th>parameter</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>User-agent</td>
-      <td>*</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Disallow</td>
-      <td>/signin</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Disallow</td>
-      <td>/signup</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Disallow</td>
-      <td>/users</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Disallow</td>
-      <td>/contact</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>Disallow</td>
-      <td>/activate</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>Disallow</td>
-      <td>/*/page</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>Disallow</td>
-      <td>/articles/search</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>Disallow</td>
-      <td>/search.php</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>Disallow</td>
-      <td>*q=*</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>Disallow</td>
-      <td>*category_slug=*</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>Disallow</td>
-      <td>*country_slug=*</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>Disallow</td>
-      <td>*county_slug=*</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>Disallow</td>
-      <td>*features=*</td>
-    </tr>
-  </tbody>
-</table>
-
-#### 9. Get Google SERPs
-The `get_serps()` function returns a Pandas dataframe containing the Google search engine results for a given search term. Note that this function is not suitable for large-scale scraping and currently includes no features to prevent it from being blocked.
-
-```python
-from ecommercetools import seo
-
-serps = seo.get_serps("data science blog")
-print(serps)
-```
-
-<table>
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>title</th>
-      <th>link</th>
-      <th>text</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>10 of the best data science blogs to follow - ...</td>
-      <td>https://www.tableau.com/learn/articles/data-sc...</td>
-      <td>10 of the best data science blogs to follow. T...</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Best Data Science Blogs to Follow in 2020 | by...</td>
-      <td>https://towardsdatascience.com/best-data-scien...</td>
-      <td>14 Jul 2020 — 1. Towards Data Science · Joined...</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Top 20 Data Science Blogs And Websites For Dat...</td>
-      <td>https://medium.com/@exastax/top-20-data-scienc...</td>
-      <td>Top 20 Data Science Blogs And Websites For Dat...</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Data Science Blog – Dataquest</td>
-      <td>https://www.dataquest.io/blog/</td>
-      <td>Browse our data science blog to get helpful ti...</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>51 Awesome Data Science Blogs You Need To Chec...</td>
-      <td>https://365datascience.com/trending/51-data-sc...</td>
-      <td>Blog name: DataKind · datakind data science bl...</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>Blogs on AI, Analytics, Data Science, Machine ...</td>
-      <td>https://www.kdnuggets.com/websites/blogs.html</td>
-      <td>Individual/small group blogs · Ai4 blog, featu...</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>Data Science Blog – Applied Data Science</td>
-      <td>https://data-science-blog.com/</td>
-      <td>... an Bedeutung – DevOps for Data Science. De...</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>Top 10 Data Science and AI Blogs in 2020 - Liv...</td>
-      <td>https://livecodestream.dev/post/top-data-scien...</td>
-      <td>Some of the best data science and AI blogs for...</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>Data Science Blogs: 17 Must-Read Blogs for Dat...</td>
-      <td>https://www.thinkful.com/blog/data-science-blogs/</td>
-      <td>Data scientists could be considered the magici...</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>rushter/data-science-blogs: A curated list of ...</td>
-      <td>https://github.com/rushter/data-science-blogs</td>
-      <td>A curated list of data science blogs. Contribu...</td>
-    </tr>
-  </tbody>
-</table>
-
-
----
-
 ### Transactions
 
 #### Create a transaction items dataframe
@@ -1855,5 +1378,481 @@ inventory_classification.head()
 
 
 
+### SEO
+
+#### 1. Discover XML sitemap locations
+The `get_sitemaps()` function takes the location of a `robots.txt` file (always stored at the root of a domain), and returns the URLs of any XML sitemaps listed within. 
+
+```python
+from ecommercetools import seo
+
+sitemaps = seo.get_sitemaps("http://www.flyandlure.org/robots.txt")
+print(sitemaps)
+
+```
+
+#### 2. Get an XML sitemap
+The `get_dataframe()` function allows you to download the URLs in an XML sitemap to a Pandas dataframe. If the sitemap contains child sitemaps, each of these will be retrieved. You can save the Pandas dataframe to CSV in the usual way. 
+
+```python
+from ecommercetools import seo
+
+df = seo.get_sitemap("http://flyandlure.org/sitemap.xml")
+print(df.head())
+```
+
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>loc</th>
+      <th>changefreq</th>
+      <th>priority</th>
+      <th>domain</th>
+      <th>sitemap_name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>http://flyandlure.org/</td>
+      <td>hourly</td>
+      <td>1.0</td>
+      <td>flyandlure.org</td>
+      <td>http://www.flyandlure.org/sitemap.xml</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>http://flyandlure.org/about</td>
+      <td>monthly</td>
+      <td>1.0</td>
+      <td>flyandlure.org</td>
+      <td>http://www.flyandlure.org/sitemap.xml</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>http://flyandlure.org/terms</td>
+      <td>monthly</td>
+      <td>1.0</td>
+      <td>flyandlure.org</td>
+      <td>http://www.flyandlure.org/sitemap.xml</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>http://flyandlure.org/privacy</td>
+      <td>monthly</td>
+      <td>1.0</td>
+      <td>flyandlure.org</td>
+      <td>http://www.flyandlure.org/sitemap.xml</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>http://flyandlure.org/copyright</td>
+      <td>monthly</td>
+      <td>1.0</td>
+      <td>flyandlure.org</td>
+      <td>http://www.flyandlure.org/sitemap.xml</td>
+    </tr>
+  </tbody>
+</table>
+
+
+#### 3. Get Core Web Vitals from PageSpeed Insights
+The `get_core_web_vitals()` function retrieves the Core Web Vitals metrics for a list of sites from the Google PageSpeed Insights API and returns results in a Pandas dataframe. The function requires a a Google PageSpeed Insights API key. 
+
+```python
+from ecommercetools import seo
+
+pagespeed_insights_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+urls = ['https://www.bbc.co.uk', 'https://www.bbc.co.uk/iplayer']
+df = seo.get_core_web_vitals(pagespeed_insights_key, urls)
+print(df.head())
+```
+
+#### 4. Get Google Knowledge Graph data
+The `get_knowledge_graph()` function returns the Google Knowledge Graph data for a given search term. This requires the use of a Google Knowledge Graph API key. By default, the function returns output in a Pandas dataframe, but you can pass the `output="json"` argument if you wish to receive the JSON data back. 
+
+```python
+from ecommercetools import seo
+
+knowledge_graph_key = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+knowledge_graph = seo.get_knowledge_graph(knowledge_graph_key, "tesla", output="dataframe")
+print(knowledge_graph)
+```
+
+#### 5. Get Google Search Console API data
+The `query_google_search_console()` function runs a search query on the Google Search Console API and returns data in a Pandas dataframe. This function requires a JSON client secrets key with access to the Google Search Console API. 
+
+```python
+from ecommercetools import seo
+
+key = "google-search-console.json"
+site_url = "http://flyandlure.org"
+payload = {
+    'startDate': "2019-01-01",
+    'endDate': "2019-12-31",
+    'dimensions': ["page", "device", "query"],
+    'rowLimit': 100,
+    'startRow': 0
+}
+
+df = seo.query_google_search_console(key, site_url, payload)
+print(df.head())
+
+```
+
+
+
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>page</th>
+      <th>device</th>
+      <th>query</th>
+      <th>clicks</th>
+      <th>impressions</th>
+      <th>ctr</th>
+      <th>position</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>http://flyandlure.org/articles/fly_fishing_gea...</td>
+      <td>MOBILE</td>
+      <td>simms freestone waders review</td>
+      <td>56</td>
+      <td>217</td>
+      <td>25.81</td>
+      <td>3.12</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>http://flyandlure.org/</td>
+      <td>MOBILE</td>
+      <td>fly and lure</td>
+      <td>37</td>
+      <td>159</td>
+      <td>23.27</td>
+      <td>3.81</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>http://flyandlure.org/articles/fly_fishing_gea...</td>
+      <td>DESKTOP</td>
+      <td>orvis encounter waders review</td>
+      <td>35</td>
+      <td>134</td>
+      <td>26.12</td>
+      <td>4.04</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>http://flyandlure.org/articles/fly_fishing_gea...</td>
+      <td>DESKTOP</td>
+      <td>simms freestone waders review</td>
+      <td>35</td>
+      <td>200</td>
+      <td>17.50</td>
+      <td>3.50</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>http://flyandlure.org/</td>
+      <td>DESKTOP</td>
+      <td>fly and lure</td>
+      <td>32</td>
+      <td>170</td>
+      <td>18.82</td>
+      <td>3.09</td>
+    </tr>
+  </tbody>
+</table>
+
+
+#### 6. Get the number of "indexed" pages
+The `get_indexed_pages()` function uses the "site:" prefix to search Google for the number of pages "indexed". This is very approximate and may not be a perfect representation, but it's usually a good guide of site "size" in the absence of other data. 
+
+```python
+from ecommercetools import seo
+
+urls = ['https://www.bbc.co.uk', 'https://www.bbc.co.uk/iplayer', 'http://flyandlure.org']
+df = seo.get_indexed_pages(urls)
+print(df.head())
+```
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>url</th>
+      <th>indexed_pages</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2</th>
+      <td>http://flyandlure.org</td>
+      <td>2090</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>https://www.bbc.co.uk/iplayer</td>
+      <td>215000</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>https://www.bbc.co.uk</td>
+      <td>12700000</td>
+    </tr>
+  </tbody>
+</table>
+
+
+#### 7. Get keyword suggestions from Google Autocomplete
+The `google_autocomplete()` function returns a set of keyword suggestions from Google Autocomplete. The `include_expanded=True` argument allows you to expand the number of suggestions shown by appending prefixes and suffixes to the search terms. 
+
+```python
+from ecommercetools import seo
+
+suggestions = seo.google_autocomplete("data science", include_expanded=False)
+print(suggestions)
+
+suggestions = seo.google_autocomplete("data science", include_expanded=True)
+print(suggestions)
+```
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>term</th>
+      <th>relevance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>data science jobs</td>
+      <td>650</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>data science jobs chester</td>
+      <td>601</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>data science course</td>
+      <td>600</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>data science masters</td>
+      <td>554</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>data science salary</td>
+      <td>553</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>data science internship</td>
+      <td>552</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>data science jobs london</td>
+      <td>551</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>data science graduate scheme</td>
+      <td>550</td>
+    </tr>
+  </tbody>
+</table>
+
+#### 8. Retrieve robots.txt content
+The `get_robots()` function returns the contents of a robots.txt file in a Pandas dataframe so it can be parsed and analysed. 
+
+```python
+from ecommercetools import seo
+
+robots = seo.get_robots("http://www.flyandlure.org/robots.txt")
+print(robots)
+```
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>directive</th>
+      <th>parameter</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>User-agent</td>
+      <td>*</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Disallow</td>
+      <td>/signin</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Disallow</td>
+      <td>/signup</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Disallow</td>
+      <td>/users</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Disallow</td>
+      <td>/contact</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Disallow</td>
+      <td>/activate</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Disallow</td>
+      <td>/*/page</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Disallow</td>
+      <td>/articles/search</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Disallow</td>
+      <td>/search.php</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Disallow</td>
+      <td>*q=*</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Disallow</td>
+      <td>*category_slug=*</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Disallow</td>
+      <td>*country_slug=*</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Disallow</td>
+      <td>*county_slug=*</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Disallow</td>
+      <td>*features=*</td>
+    </tr>
+  </tbody>
+</table>
+
+#### 9. Get Google SERPs
+The `get_serps()` function returns a Pandas dataframe containing the Google search engine results for a given search term. Note that this function is not suitable for large-scale scraping and currently includes no features to prevent it from being blocked.
+
+```python
+from ecommercetools import seo
+
+serps = seo.get_serps("data science blog")
+print(serps)
+```
+
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>title</th>
+      <th>link</th>
+      <th>text</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10 of the best data science blogs to follow - ...</td>
+      <td>https://www.tableau.com/learn/articles/data-sc...</td>
+      <td>10 of the best data science blogs to follow. T...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Best Data Science Blogs to Follow in 2020 | by...</td>
+      <td>https://towardsdatascience.com/best-data-scien...</td>
+      <td>14 Jul 2020 — 1. Towards Data Science · Joined...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Top 20 Data Science Blogs And Websites For Dat...</td>
+      <td>https://medium.com/@exastax/top-20-data-scienc...</td>
+      <td>Top 20 Data Science Blogs And Websites For Dat...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Data Science Blog – Dataquest</td>
+      <td>https://www.dataquest.io/blog/</td>
+      <td>Browse our data science blog to get helpful ti...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>51 Awesome Data Science Blogs You Need To Chec...</td>
+      <td>https://365datascience.com/trending/51-data-sc...</td>
+      <td>Blog name: DataKind · datakind data science bl...</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Blogs on AI, Analytics, Data Science, Machine ...</td>
+      <td>https://www.kdnuggets.com/websites/blogs.html</td>
+      <td>Individual/small group blogs · Ai4 blog, featu...</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Data Science Blog – Applied Data Science</td>
+      <td>https://data-science-blog.com/</td>
+      <td>... an Bedeutung – DevOps for Data Science. De...</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Top 10 Data Science and AI Blogs in 2020 - Liv...</td>
+      <td>https://livecodestream.dev/post/top-data-scien...</td>
+      <td>Some of the best data science and AI blogs for...</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Data Science Blogs: 17 Must-Read Blogs for Dat...</td>
+      <td>https://www.thinkful.com/blog/data-science-blogs/</td>
+      <td>Data scientists could be considered the magici...</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>rushter/data-science-blogs: A curated list of ...</td>
+      <td>https://github.com/rushter/data-science-blogs</td>
+      <td>A curated list of data science blogs. Contribu...</td>
+    </tr>
+  </tbody>
+</table>
+
+
+---
 
 
