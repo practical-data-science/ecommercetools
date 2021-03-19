@@ -1,6 +1,7 @@
 .idea/
 build/
 dist/
+venv/
 ecommercetools.egg-info
 google-search-console.json
 example.py
