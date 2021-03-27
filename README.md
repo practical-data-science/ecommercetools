@@ -12,9 +12,99 @@ You can install EcommerceTools and its dependencies via PyPi by entering `pip3 i
 
 ### Transactions
 
-#### Create a transaction items dataframe
+1. #### Load sample transaction items data
 
-The `utilities` module includes a range of tools that allow you to format data so it can be used within other EcommerceTools functions. The `load_data()` function is used to create a Pandas dataframe of formatted transactional item data. 
+If you want to get started with the transactions, products, and customers features, you can use the `load_sample_data()` function to load a set of real world data. This imports the transaction items from widely-used Online Retail dataset and reformats it ready for use by EcommerceTools. 
+
+```python
+from ecommercetools import utilities
+
+transaction_items = utilities.load_sample_data()
+transaction_items.head()
+```
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>order_id</th>
+      <th>sku</th>
+      <th>description</th>
+      <th>quantity</th>
+      <th>order_date</th>
+      <th>unit_price</th>
+      <th>customer_id</th>
+      <th>country</th>
+      <th>line_price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>536365</td>
+      <td>85123A</td>
+      <td>WHITE HANGING HEART T-LIGHT HOLDER</td>
+      <td>6</td>
+      <td>2010-12-01 08:26:00</td>
+      <td>2.55</td>
+      <td>17850.0</td>
+      <td>United Kingdom</td>
+      <td>15.30</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>536365</td>
+      <td>71053</td>
+      <td>WHITE METAL LANTERN</td>
+      <td>6</td>
+      <td>2010-12-01 08:26:00</td>
+      <td>3.39</td>
+      <td>17850.0</td>
+      <td>United Kingdom</td>
+      <td>20.34</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>536365</td>
+      <td>84406B</td>
+      <td>CREAM CUPID HEARTS COAT HANGER</td>
+      <td>8</td>
+      <td>2010-12-01 08:26:00</td>
+      <td>2.75</td>
+      <td>17850.0</td>
+      <td>United Kingdom</td>
+      <td>22.00</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>536365</td>
+      <td>84029G</td>
+      <td>KNITTED UNION FLAG HOT WATER BOTTLE</td>
+      <td>6</td>
+      <td>2010-12-01 08:26:00</td>
+      <td>3.39</td>
+      <td>17850.0</td>
+      <td>United Kingdom</td>
+      <td>20.34</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>536365</td>
+      <td>84029E</td>
+      <td>RED WOOLLY HOTTIE WHITE HEART.</td>
+      <td>6</td>
+      <td>2010-12-01 08:26:00</td>
+      <td>3.39</td>
+      <td>17850.0</td>
+      <td>United Kingdom</td>
+      <td>20.34</td>
+    </tr>
+  </tbody>
+</table>
+
+2. #### Create a transaction items dataframe
+
+The `utilities` module includes a range of tools that allow you to format data, so it can be used within other EcommerceTools functions. The `load_data()` function is used to create a Pandas dataframe of formatted transactional item data. When loading your transaction items data, all you need to do is define the column mappings, and the function will reformat the dataframe accordingly. 
 
 ```python
 import pandas as pd
@@ -111,7 +201,7 @@ print(transaction_items.head())
   </tbody>
 </table>
 
-#### Create a transactions dataframe
+3. #### Create a transactions dataframe
 
 The `get_transactions()` function takes the formatted Pandas dataframe of transaction items and returns a Pandas dataframe of aggregated transaction data, which includes features identifying the order number. 
 
@@ -1217,7 +1307,100 @@ abc_df.head()
   </tbody>
 </table>
 
+#### 8. Predict customer AOV, CLV, and orders
 
+EcommerceTools allows you to predict the AOV, Customer Lifetime Value (CLV) and expected number of orders via the Gamma-Gamma and BG/NBD models from the excellent Lifetimes package. By passing the dataframe of transactions from `get_transactions()` to the `get_customer_predictions()` function, EcommerceTools will fit the BG/NBD and Gamma-Gamma models and predict the AOV, order quantity, and CLV for each customer in the defined number of future days after the end of the observation period.
+
+```python
+customer_predictions = customers.get_customer_predictions(transactions_df, 
+                                                          observation_period_end='2011-12-09', 
+                                                          days=90)
+customer_predictions.head(10)
+```
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>customer_id</th>
+      <th>predicted_purchases</th>
+      <th>aov</th>
+      <th>clv</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>12346.0</td>
+      <td>0.188830</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>12347.0</td>
+      <td>1.408736</td>
+      <td>569.978836</td>
+      <td>836.846896</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>12348.0</td>
+      <td>0.805907</td>
+      <td>333.784235</td>
+      <td>308.247354</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>12349.0</td>
+      <td>0.855607</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>12350.0</td>
+      <td>0.196304</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>12352.0</td>
+      <td>1.682277</td>
+      <td>376.175359</td>
+      <td>647.826169</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>12353.0</td>
+      <td>0.272541</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>12354.0</td>
+      <td>0.247183</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>12355.0</td>
+      <td>0.262909</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>12356.0</td>
+      <td>0.645368</td>
+      <td>324.039419</td>
+      <td>256.855226</td>
+    </tr>
+  </tbody>
+</table>
 ---
 
 ### Advertising

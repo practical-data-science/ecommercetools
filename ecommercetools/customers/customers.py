@@ -5,6 +5,9 @@ from ecommercetools.transactions import transactions
 from ecommercetools import utilities
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+from lifetimes import GammaGammaFitter
+from lifetimes.utils import summary_data_from_transaction_data
+from lifetimes import BetaGeoFitter
 
 
 def get_customers(transaction_items):
@@ -388,3 +391,177 @@ def get_latency(df_transactions):
         lambda x: _latency_label_customers(x['avg_latency'], x['std_latency'], x['recency']), axis=1)
 
     return df_customers
+
+
+def _get_lifetimes_rfmt(df_transactions, observation_period_end):
+    """Return the RFMT data from the Lifetimes model.
+
+    Args:
+        df_transactions (df): Pandas dataframe of transactions from get_transactions()
+        observation_period_end (string): Date string in YYYY-MM-DD format representing end of observation period.
+
+    Returns:
+        df: Pandas dataframe containing frequency, recency, T, monetary_value per customer.
+    """
+
+    df_transactions = df_transactions[df_transactions['replacement'] == 0]
+
+    df = summary_data_from_transaction_data(df_transactions,
+                                            'customer_id',
+                                            'order_date',
+                                            'revenue',
+                                            observation_period_end=observation_period_end)
+    return df
+
+
+def _get_predicted_purchases(df_transactions,
+                             observation_period_end,
+                             days=90):
+    """Return the number of predicted purchases per customer from the Lifetimes BG/NBD model.
+
+    Args:
+        df_transactions (df): Pandas dataframe of transactions from get_transactions()
+        observation_period_end (string): Date string in YYYY-MM-DD format representing end of observation period.
+
+    Returns:
+        df: Pandas dataframe containing frequency, recency, T, monetary_value per customer, and predicted purchases.
+    """
+
+    df = _get_lifetimes_rfmt(df_transactions, observation_period_end)
+    bgf = BetaGeoFitter(penalizer_coef=0)
+    bgf.fit(df['frequency'], df['recency'], df['T'])
+    df['predicted_purchases'] = bgf.conditional_expected_number_of_purchases_up_to_time(days,
+                                                                                        df['frequency'],
+                                                                                        df['recency'],
+                                                                                        df['T'])
+    return df
+
+
+def _get_predicted_aov(df_transactions,
+                       observation_period_end,
+                       ggf_penalizer_coef=0):
+    """Returns the predicted AOV for each customer via the Gamma-Gamma model.
+    This function uses models from the Lifetimes package.
+
+    Args:
+        df_transactions (df): Pandas dataframe of transactions from get_transactions()
+        observation_period_end (string): Date string in YYYY-MM-DD format for end of observation period.
+        ggf_penalizer_coef (float, optional): Penalizer coefficient for Gamma-Gamma model. See Lifetimes.
+
+    Returns:
+        Predicted AOV for each customer.
+    """
+
+    df_rfmt = _get_lifetimes_rfmt(df_transactions, observation_period_end)
+
+    df_returning = df_rfmt[df_rfmt['frequency'] > 0]
+    df_returning = df_rfmt[df_rfmt['monetary_value'] > 0]
+
+    ggf = GammaGammaFitter(penalizer_coef=ggf_penalizer_coef)
+    ggf.fit(df_returning['frequency'],
+            df_returning['monetary_value'])
+
+    predicted_monetary = ggf.conditional_expected_average_profit(
+        df_returning['frequency'],
+        df_returning['monetary_value']
+    )
+
+    aov_df = pd.DataFrame(predicted_monetary, columns=['aov'])
+
+    return aov_df
+
+
+def _get_predicted_clv(df_transactions,
+                       observation_period_end,
+                       months=12,
+                       discount_rate=0.01,
+                       ggf_penalizer_coef=0,
+                       bgf_penalizer_coef=0):
+    """Return the predicted CLV for each customer using the Gamma-Gamma and BG/NBD models.
+    This function uses models from the Lifetimes package.
+
+    Args:
+        df_transactions (df): Pandas dataframe of transactions from get_transactions()
+        observation_period_end (string): Date string in YYYY-MM-DD format for end of observation period.
+        months (int, optional): Optional number of months in CLV prediction window.
+        discount_rate (float, optional): Discount rate. See Lifetimes.
+        ggf_penalizer_coef (float, optional): Penalizer coefficient for Gamma-Gamma model. See Lifetimes.
+        bgf_penalizer_coef (float, optional): Penalizer coefficient for BG/NBD model. See Lifetimes.
+
+    Returns:
+        Predicted CLV for each customer.
+    """
+
+    df_rfmt = _get_lifetimes_rfmt(df_transactions, observation_period_end)
+    df_returning = df_rfmt[df_rfmt['frequency'] > 0]
+    df_returning = df_rfmt[df_rfmt['monetary_value'] > 0]
+
+    ggf = GammaGammaFitter(penalizer_coef=ggf_penalizer_coef)
+    ggf.fit(df_returning['frequency'],
+            df_returning['monetary_value'])
+
+    bgf = BetaGeoFitter(penalizer_coef=bgf_penalizer_coef)
+    bgf.fit(df_returning['frequency'],
+            df_returning['recency'],
+            df_returning['T'])
+
+    preds = ggf.customer_lifetime_value(
+        bgf,
+        df_returning['frequency'],
+        df_returning['recency'],
+        df_returning['T'],
+        df_returning['monetary_value'],
+        time=months,
+        discount_rate=discount_rate
+    ).to_frame().reset_index()
+
+    return preds
+
+
+def get_customer_predictions(df_transactions,
+                             observation_period_end,
+                             days=90,
+                             months=3,
+                             discount_rate=0.01,
+                             ggf_penalizer_coef=0,
+                             bgf_penalizer_coef=0):
+    """Get predicted customer purchased, AOV, and CLV for the defined period.
+
+    This uses the Lifetimes package to run the Gamma-Gamma, and BG/NBD models
+    and predict the AOV, CLV, and number of purchases each customer will make.
+    These models use a different approach to measuring RFMT than the other
+    functions in EcommerceTools, so are not directly comparable, so the results
+    have been removed from the output.
+
+    Args:
+        df_transactions (df): Pandas dataframe of transactions from get_transactions()
+        observation_period_end (string): Date string in YYYY-MM-DD format for end of observation period.
+        days (int, optional): Optional number of days in purchase prediction window.
+        months (int, optional): Optional number of months in CLV prediction window.
+        discount_rate (float, optional): Discount rate. See Lifetimes.
+        ggf_penalizer_coef (float, optional): Penalizer coefficient for Gamma-Gamma model. See Lifetimes.
+        bgf_penalizer_coef (float, optional): Penalizer coefficient for BG/NBD model. See Lifetimes.
+
+    Returns:
+        df_predictions: Pandas dataframe containing predictions from Gamma-Gamma and BG/NBD models.
+    """
+
+    df_predicted_purchases = _get_predicted_purchases(df_transactions,
+                                                      observation_period_end,
+                                                      days=days)
+    df_aov = _get_predicted_aov(df_transactions,
+                                observation_period_end)
+
+    df_clv = _get_predicted_clv(df_transactions,
+                                observation_period_end,
+                                months=months,
+                                discount_rate=discount_rate,
+                                bgf_penalizer_coef=bgf_penalizer_coef,
+                                ggf_penalizer_coef=ggf_penalizer_coef
+                                )
+
+    df_predictions = df_predicted_purchases.merge(df_aov, on='customer_id', how='left')
+    df_predictions = df_predictions.merge(df_clv, on='customer_id', how='left')
+
+    return df_predictions[['customer_id', 'predicted_purchases', 'aov', 'clv']]
+

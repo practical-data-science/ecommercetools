@@ -2,6 +2,7 @@
 build/
 dist/
 venv/
+data/
 ecommercetools.egg-info
 google-search-console.json
 example.py
