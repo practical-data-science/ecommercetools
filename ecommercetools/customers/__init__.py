@@ -5,10 +5,4 @@ from ecommercetools.customers.customers import get_cohorts
 from ecommercetools.customers.customers import get_cohort_matrix
 from ecommercetools.customers.customers import get_retention
 from ecommercetools.customers.customers import get_latency
-
-
-
-
-
-
-
+from ecommercetools.customers.customers import get_customer_predictions
