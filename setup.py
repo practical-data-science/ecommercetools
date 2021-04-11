@@ -18,7 +18,8 @@ setup(
     author_email='matt@practicaldatascience.co.uk',
     url='https://github.com/practical-data-science/ecommercetools',
     download_url='https://github.com/practical-data-science/ecommercetools/archive/master.zip',
-    keywords=['ecommerce', 'marketing', 'seo', 'customers', 'products', 'operations', 'analytics', 'python', 'pandas'],
+    keywords=['ecommerce', 'marketing', 'seo', 'customers', 'products',
+              'operations', 'analytics', 'python', 'pandas', 'nlp'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -32,5 +33,7 @@ setup(
                       'requests',
                       'requests_html',
                       'httplib2 >= 0.15.0',
-                      'lifetimes']
+                      'lifetimes',
+                      'transformers',
+                      'torch']
 )

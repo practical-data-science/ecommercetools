@@ -3,3 +3,5 @@ requests-html
 gapandas
 sklearn
 lifetimes
+transformers
+torch
