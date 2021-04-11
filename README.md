@@ -2137,4 +2137,26 @@ print(serps)
 
 ---
 
+### Natural Language Processing (NLP)
 
+#### 1. Generate text summaries
+The `get_summaries()` function of the `nlp` module takes a Pandas dataframe containing text and returns a machine-generated summary of the content using a Huggingface Transformers pipeline via PyTorch. To use this feature, first load your Pandas dataframe and import the `nlp` module from `ecommercetools`.
+
+```python
+import pandas as pd
+from ecommercetools import nlp 
+
+pd.set_option('max_colwidth', 1000)
+df = pd.read_csv('text.csv')
+df.head()
+```
+
+Specify the name of the Pandas dataframe, the column containing the text you wish to summarise (i.e. `product_description`), and specify a column name in which to store the machine-generated summary. The `min_length` and `max_length` arguments control the number of words generated, while the `do_sample` argument controls whether the generated text is completely unique (`do_sample=False`) or extracted from the text (`do_sample=True`).
+
+```python
+df = nlp.get_summaries(df, 'product_description', 'sampled_summary', min_length=50, max_length=100, do_sample=True)
+df = nlp.get_summaries(df, 'product_description', 'unsampled_summary', min_length=50, max_length=100, do_sample=False)
+df = nlp.get_summaries(df, 'product_description', 'unsampled_summary_20_to_30', min_length=20, max_length=30, do_sample=False)
+```
+
+Since the model used for text summarisation is very large (1.2 GB plus), this function will take some time to complete. Once loaded, summaries are generated within a second or two per piece of text, so it is advisable to try smaller volumes of data initially. 
