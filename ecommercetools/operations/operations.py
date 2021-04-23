@@ -20,12 +20,13 @@ def _abc_classify_product(percentage):
         return 'C'
 
 
-def get_inventory_classification(transaction_items, days=None):
+def get_inventory_classification(transaction_items, days=None, verbose=False):
     """Return a Pandas DataFrame of product inventory classification from the transaction items dataframe.
 
     Args:
         transaction_items (object): Pandas DataFrame of transaction items.
         days (int, optional): Return data only for products sold in the past X days.
+        verbose (bool, optional): Displays additional columns of workings when set to True.
 
     Returns:
         products (object): Pandas DataFrame.
@@ -43,5 +44,11 @@ def get_inventory_classification(transaction_items, days=None):
     products_data['revenue_running_percentage'] = (products_data['revenue_cumsum'] / products_data['revenue_total']) * 100
     products_data['abc_class'] = products_data['revenue_running_percentage'].apply(_abc_classify_product)
     products_data['abc_rank'] = products_data['revenue_running_percentage'].rank().astype(int)
-    products_data = products_data[['sku', 'abc_class', 'abc_rank']]
+
+    if verbose:
+        products_data = products_data[['sku', 'abc_class', 'abc_rank',
+                                       'revenue_cumsum', 'revenue_total', 'revenue_running_percentage']]
+    else:
+        products_data = products_data[['sku', 'abc_class', 'abc_rank']]
+
     return products_data
