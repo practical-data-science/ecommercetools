@@ -18,7 +18,7 @@ setup(
     author_email='matt@practicaldatascience.co.uk',
     url='https://github.com/practical-data-science/gilfoyle',
     download_url='https://github.com/practical-data-science/gilfoyle/archive/master.zip',
-    keywords=['ecommerce', 'marketing', 'seo', 'customers', 'products',
+    keywords=['ecommerce', 'marketing', 'seo', 'customers', 'products', 'rfm', 'abc',
               'operations', 'analytics', 'python', 'pandas', 'nlp'],
     classifiers=[
         'Development Status :: 3 - Alpha',
