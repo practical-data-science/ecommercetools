@@ -38,15 +38,18 @@ def get_inventory_classification(transaction_items, days=None, verbose=False):
     else:
         products_data = products.get_products(transaction_items)
 
+    # Sort the data
+    products_data['revenue_total'] = products_data['revenue'].sum()
+    products_data = products_data.sort_values(by='revenue', ascending=False)
+
     # ABC inventory classification
     products_data['revenue_cumsum'] = products_data['revenue'].cumsum()
-    products_data['revenue_total'] = products_data['revenue'].sum()
     products_data['revenue_running_percentage'] = (products_data['revenue_cumsum'] / products_data['revenue_total']) * 100
     products_data['abc_class'] = products_data['revenue_running_percentage'].apply(_abc_classify_product)
     products_data['abc_rank'] = products_data['revenue_running_percentage'].rank().astype(int)
 
     if verbose:
-        products_data = products_data[['sku', 'abc_class', 'abc_rank',
+        products_data = products_data[['sku', 'abc_class', 'abc_rank', 'revenue',
                                        'revenue_cumsum', 'revenue_total', 'revenue_running_percentage']]
     else:
         products_data = products_data[['sku', 'abc_class', 'abc_rank']]
