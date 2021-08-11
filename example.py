@@ -4,6 +4,7 @@ from ecommercetools import transactions
 from ecommercetools import products
 from ecommercetools import customers
 from ecommercetools import operations
+from ecommercetools import seo
 
 # =======================================================================
 # Load sample data
@@ -101,3 +102,21 @@ print(customer_predictions.head(10))
 inventory_classification = operations.get_inventory_classification(transaction_items, verbose=True)
 print(inventory_classification.head())
 print(inventory_classification.abc_class.value_counts())
+
+# =======================================================================
+# Scrape a bunch of URLs
+# =======================================================================
+
+urls = ['https://practicaldatascience.co.uk/data-science/how-to-create-a-pandas-dataframe',
+        'https://practicaldatascience.co.uk/data-science/how-to-query-the-google-search-console-api-with-ecommercetools',
+        'https://practicaldatascience.co.uk/data-science/how-to-assign-rfm-scores-with-quantile-based-discretization',
+        '404',
+        'https://practicaldatascience.co.uk/data-science/how-to-engineer-customer-purchase-latency-features',
+        'https://practicaldatascience.co.uk/assets/files/marketing.pdf'
+        ]
+df = pd.DataFrame(list(zip(urls)), columns=['url'])
+
+df_pages = seo.scraping.scrape_site(df, url='url')
+
+print(df_pages)
+
