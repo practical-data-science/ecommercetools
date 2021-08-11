@@ -59,23 +59,25 @@ def scrape_site(df, url='url', verbose=True):
     Args:
         df: Pandas dataframe containing the URL list.
         url (optional, string): Optional name of URL column, if not 'url'
+        verbose (optional, boolean, default = True): Set to False to hide progress updates
 
     Returns:
         df: Pandas dataframe containing all scraped content.
+
     """
 
     if verbose:
         pages = len(df)
         minutes = pages / 60
 
-        print('Preparing to scrape ' + str(pages) + ' pages. This will take approximately ' + str(minutes) + ' minutes')
+        print('Preparing to scrape ' + str(pages) + ' pages. This will take approximately ' + str(round(minutes)) + ' minutes')
 
     df_pages = pd.DataFrame(columns=['url', 'title', 'description'])
 
     for index, row in df.iterrows():
 
         if verbose:
-            print('Scraping: ' + row['url'])
+            print('Scraping: ' + row[url])
 
         response = _get_source(row[url])
 
