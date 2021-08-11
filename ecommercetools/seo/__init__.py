@@ -7,3 +7,5 @@ from ecommercetools.seo.google_search_console import query_google_search_console
 from ecommercetools.seo.google_autocomplete import google_autocomplete
 from ecommercetools.seo.google_search import get_indexed_pages
 from ecommercetools.seo.google_search import get_serps
+from ecommercetools.seo.scraping import scrape_site
+
