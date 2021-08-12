@@ -48,7 +48,7 @@ def _get_description(response):
     """
 
     try:
-        return response.html.find('title', first=True).text
+        return response.html.xpath('//meta[@name="description"]/@content')[0]
     except Exception as e:
         return
 
