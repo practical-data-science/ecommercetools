@@ -53,13 +53,13 @@ def _get_description(response):
         return
 
 
-def scrape_site(df, url='url', verbose=True):
+def scrape_site(df, url='loc', verbose=False):
     """Scrapes every page in a Pandas dataframe column.
 
     Args:
         df: Pandas dataframe containing the URL list.
         url (optional, string): Optional name of URL column, if not 'url'
-        verbose (optional, boolean, default = True): Set to False to hide progress updates
+        verbose (optional, boolean, default = False): Set to False to hide progress updates
 
     Returns:
         df: Pandas dataframe containing all scraped content.

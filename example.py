@@ -114,9 +114,9 @@ urls = ['https://practicaldatascience.co.uk/data-science/how-to-create-a-pandas-
         'https://practicaldatascience.co.uk/data-science/how-to-engineer-customer-purchase-latency-features',
         'https://practicaldatascience.co.uk/assets/files/marketing.pdf'
         ]
-df = pd.DataFrame(list(zip(urls)), columns=['url'])
+df = pd.DataFrame(list(zip(urls)), columns=['loc'])
 
-df_pages = seo.scraping.scrape_site(df, url='url')
+df_pages = seo.scraping.scrape_site(df)
 
 print(df_pages)
 
