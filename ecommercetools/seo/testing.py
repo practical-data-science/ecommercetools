@@ -154,8 +154,6 @@ def _get_seo_test_data(key, site_url, post_period_start_date, days, filters=None
     df.sort_values(by='date', ascending=True).head()
     df = df.set_index('date')
 
-    print(df.head())
-
     return df
 
 
@@ -185,9 +183,6 @@ def seo_test(key,
 
     # Get the dates of the pre- and post-periods
     pre_period, post_period = _get_pre_and_post_periods(post_period_start_date, days)
-
-    print(pre_period)
-    print(post_period)
 
     # Fit the test model
     model = CausalImpact(df[metric], pre_period, post_period)
