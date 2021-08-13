@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 setup(
     name='ecommercetools',
     packages=find_namespace_packages(include=['ecommercetools.*']),
-    version='0.31',
+    version='0.32',
     license='MIT',
     description='EcommerceTools is a data science toolkit for ecommerce, marketing science, and technical SEO.',
     long_description=long_description,
@@ -18,8 +18,8 @@ setup(
     author_email='matt@practicaldatascience.co.uk',
     url='https://github.com/practical-data-science/ecommercetools',
     download_url='https://github.com/practical-data-science/ecommercetools/archive/master.zip',
-    keywords=['ecommerce', 'marketing', 'seo', 'customers', 'products', 'rfm', 'abc',
-              'operations', 'analytics', 'python', 'pandas', 'nlp'],
+    keywords=['ecommerce', 'marketing', 'seo', 'seo testing', 'customers', 'products', 'rfm', 'abc',
+              'operations', 'analytics', 'python', 'pandas', 'nlp', 'causal impact'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -35,5 +35,6 @@ setup(
                       'httplib2 >= 0.15.0',
                       'lifetimes',
                       'transformers',
-                      'torch']
+                      'torch',
+                      'pycausalimpact']
 )

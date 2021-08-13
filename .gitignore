@@ -5,3 +5,5 @@ venv/
 data/
 ecommercetools.egg-info
 google-search-console.json
+pds-client-secrets.json
+example-test.py
