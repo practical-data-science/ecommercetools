@@ -5,3 +5,4 @@ sklearn
 lifetimes
 transformers
 torch
+pycausalimpact
