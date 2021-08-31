@@ -5,6 +5,7 @@ General functions for scraping data from Google search engine results pages.
 import requests
 import urllib.parse
 import pandas as pd
+import numpy as np
 from requests_html import HTMLSession
 
 
@@ -107,6 +108,16 @@ def _get_results(query: str):
     return response
 
 
+def _get_next_page(response, domain="google.co.uk"):
+    """Get the URL for the next page of results."""
+
+    css_identifier_next = "#pnnext"
+    next_page_url = response.html.find(css_identifier_next, first=True).attrs['href']
+    next_page = "https://www." + domain + next_page_url
+
+    return next_page
+
+
 def _parse_search_results(response):
     css_identifier_result = ".tF2Cxc"
     css_identifier_title = "h3"
@@ -129,12 +140,17 @@ def _parse_search_results(response):
     return output
 
 
-def get_serps(query: str, output="dataframe"):
-    """Return the first 10 Google search results for a given query.
+def get_serps(query: str,
+                        output="dataframe",
+                        pages=1,
+                        domain="google.co.uk"):
+    """Return the Google search results for a given query.
 
     Args:
         query (string): Query term to search Google for.
-        output (string): Optional output format (dataframe or dictionary).
+        output (string, optional): Optional output format (dataframe or dictionary).
+        pages (int, optional): Optional number of pages to return.
+        domain (string, optional): Optional Google domain (default is google.co.uk).
 
     Returns:
         results (dict): Results of query.
@@ -142,11 +158,21 @@ def get_serps(query: str, output="dataframe"):
 
     response = _get_results(query)
     results = _parse_search_results(response)
+    next_page = _get_next_page(response)
+
+    page = 1
+    while page <= pages:
+        if page > 1:
+            response = _get_source(next_page)
+            results = results + _parse_search_results(response)
+            next_page = _get_next_page(response)
+        page += 1
 
     if results:
         if output == "dataframe":
             df = pd.DataFrame.from_records(results)
-            return df
+            df.index = np.arange(1, len(df) + 1)
+            df.index.names = ['position']
+            return df.reset_index()
         else:
             return results
-

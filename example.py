@@ -120,3 +120,10 @@ df_pages = seo.scraping.scrape_site(df)
 
 print(df_pages)
 
+# =======================================================================
+# Get SERPs
+# =======================================================================
+
+results = seo.get_serps("data science courses", pages=5)
+print(results)
+
