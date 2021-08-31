@@ -16,9 +16,9 @@ You can install EcommerceTools and its dependencies via PyPi by entering `pip3 i
 - [Products](#Products)
 - [Customers](#Customers)
 - [Advertising](#Advertising)
-- [Operations management](#Operations management)
+- [Operations](#Operations)
 - [Marketing](#Marketing)
-- [Natural Language Processing (NLP)](#Natural Language Processing (NLP))
+- [NLP](#NLP)
 - [SEO](#SEO)
 
 ---
@@ -1518,7 +1518,7 @@ spin
 
 ---
 
-### Operations management
+### Operations
 
 #### 1. Create an ABC inventory classification
 
@@ -1673,7 +1673,7 @@ trading_events_df.head()
 
 ---
 
-### Natural Language Processing (NLP)
+### NLP
 
 #### 1. Generate text summaries
 The `get_summaries()` function of the `nlp` module takes a Pandas dataframe containing text and returns a machine-generated summary of the content using a Huggingface Transformers pipeline via PyTorch. To use this feature, first load your Pandas dataframe and import the `nlp` module from `ecommercetools`.
