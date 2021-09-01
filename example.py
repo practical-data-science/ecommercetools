@@ -127,3 +127,19 @@ print(df_pages)
 results = seo.get_serps("data science courses", pages=5)
 print(results)
 
+# =======================================================================
+# Get all Google Search Console data
+# =======================================================================
+
+key = "pds-client-secrets.json"
+site_url = "sc-domain:practicaldatascience.co.uk"
+payload = {
+    'startDate': "2021-01-01",
+    'endDate': "2021-08-31",
+    'dimensions': ["query"],
+    'rowLimit': 25000,
+    'startRow': 0
+}
+
+df = seo.query_google_search_console(key, site_url, payload, fetch_all=True)
+print(len(df))
