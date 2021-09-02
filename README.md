@@ -1823,8 +1823,6 @@ print(df.head())
 ```
 
 
-
-
 <table>
   <thead>
     <tr style="text-align: right;">
@@ -1891,6 +1889,27 @@ print(df.head())
     </tr>
   </tbody>
 </table>
+
+To fetch all results, set `fetch_all` to `True`. This will automatically paginate through your Google Search Console data and return all results. Be aware that if you do this you may hit Google's quota limit if you run a query over an extended period, or have a busy site with lots of `page` or `query` dimensions. 
+
+```python
+from ecommercetools import seo
+
+key = "google-search-console.json"
+site_url = "http://flyandlure.org"
+payload = {
+    'startDate': "2019-01-01",
+    'endDate': "2019-12-31",
+    'dimensions': ["page", "device", "query"],
+    'rowLimit': 25000,
+    'startRow': 0
+}
+
+df = seo.query_google_search_console(key, site_url, payload, fetch_all=True)
+print(df.head())
+
+```
+
 
 
 #### 6. Get the number of "indexed" pages
