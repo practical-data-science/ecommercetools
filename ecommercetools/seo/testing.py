@@ -74,9 +74,9 @@ def _get_pre_and_post_periods(post_period_start_date, days):
             ['2021-07-18', '2021-07-31']
     """
 
-    pre_period_start_date = _subtract_days_from_date(post_period_start_date, 14)
+    pre_period_start_date = _subtract_days_from_date(post_period_start_date, days)
     pre_period_end_date = _subtract_days_from_date(post_period_start_date, 1)
-    post_period_end_date = _add_days_to_date(post_period_start_date, 13)
+    post_period_end_date = _add_days_to_date(post_period_start_date, days-1)
 
     pre_period = [pre_period_start_date, pre_period_end_date]
     post_period = [post_period_start_date, post_period_end_date]
