@@ -119,3 +119,88 @@ def query_google_search_console(key: str, site_url: str, payload: dict, fetch_al
 
             startrow += maxrows
     return pd.DataFrame.from_dict(results)
+
+
+def query_google_search_console_compare(key, site_url, payload_before, payload_after, fetch_all=False):
+    """Run two queries on the Google Search Console API and return a dataframe of results comparing changes.
+
+    Args:
+        key (object): JSON client secrets key file path.
+        site_url (string): URL of Google Search Console property
+        payload_before (dict): API query payload dictionary for earliest period
+        payload_after (dict): API query payload dictionary for latest period
+        fetch_all (boolean, default=False): Set to True to return all results and ignore rowLimit and startRow if provided
+
+    Example:
+
+    The below code will compare queries by page and device across two periods and return a dataframe of results.
+
+    payload_before = {
+    'startDate': "2021-08-11",
+    'endDate': "2021-08-31",
+    'dimensions': ["page","query", "device"],
+    }
+
+    payload_after = {
+        'startDate': "2021-07-21",
+        'endDate': "2021-08-10",
+        'dimensions': ["page","query", "device"],
+    }
+
+    df = query_google_search_console_compare(key, site_url, payload_before, payload_after, fetch_all=False)
+
+    Return:
+        df (dataframe): Pandas dataframe containing requested data.
+    """
+
+    # Validate the payload
+    if ('date' in payload_before['dimensions']) or ('date' in payload_after['dimensions']):
+        print('The date dimension cannot be used in a payload. Please use only page, query, and device.')
+    elif payload_before['dimensions'] != payload_after['dimensions']:
+        print('The payload dimensions provided do not match. Please use the same dimensions in each payload.')
+    else:
+        # Fetch the data and prefix the column names with _before and _after
+        df_before = query_google_search_console(key, site_url, payload_before, fetch_all=fetch_all)
+        df_after = query_google_search_console(key, site_url, payload_after, fetch_all=fetch_all)
+        df_before.columns = [str(col) + '_before' for col in df_before.columns]
+        df_after.columns = [str(col) + '_after' for col in df_after.columns]
+
+        # Extract the dimensions from the payload, remove date and append _before and _after and join data
+        dimensions_before = [dimension + '_before' for dimension in payload_before['dimensions']]
+        dimensions_after = [dimension + '_after' for dimension in payload_after['dimensions']]
+        df = df_before.merge(df_after, how='left', left_on=dimensions_before, right_on=dimensions_after)
+        df = df.fillna(0)
+
+        # Calculate changes between the periods
+        df['clicks_change'] = df['clicks_after'] - df['clicks_before']
+        df['impressions_change'] = df['impressions_after'] - df['impressions_before']
+        df['ctr_change'] = df['ctr_after'] - df['ctr_before']
+        df['position_change'] = df['position_after'] - df['position_before']
+
+        # Drop the _after suffixed columns from the dataframe
+        object_columns = list(df.select_dtypes(['object']).columns)
+        after_columns = [column for column in object_columns if "_after" in column]
+        df = df.drop(columns=after_columns)
+
+        # Create the dataframe
+        dimension_columns = list(df.select_dtypes(['object']).columns)
+        metrics = ['impressions_before',
+                   'impressions_after',
+                   'impressions_change',
+                    'clicks_before',
+                   'clicks_after',
+                   'clicks_change',
+                   'ctr_before',
+                   'ctr_after',
+                   'ctr_change',
+                   'position_before',
+                   'position_after',
+                   'position_change']
+        df = df[dimension_columns + metrics]
+
+        # Drop the _before from dimension columns
+        df.columns = df.columns.str.replace('page_before', 'page')
+        df.columns = df.columns.str.replace('query_before', 'query')
+        df.columns = df.columns.str.replace('device_before', 'device')
+
+        return df

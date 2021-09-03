@@ -1890,6 +1890,8 @@ print(df.head())
   </tbody>
 </table>
 
+##### Fetching all results from Google Search Console
+
 To fetch all results, set `fetch_all` to `True`. This will automatically paginate through your Google Search Console data and return all results. Be aware that if you do this you may hit Google's quota limit if you run a query over an extended period, or have a busy site with lots of `page` or `query` dimensions. 
 
 ```python
@@ -1910,6 +1912,24 @@ print(df.head())
 
 ```
 
+##### Comparing two time periods in Google Search Console
+
+```python
+payload_before = {
+    'startDate': "2021-08-11",
+    'endDate': "2021-08-31",
+    'dimensions': ["page","query"],    
+}
+
+payload_after = {
+    'startDate': "2021-07-21",
+    'endDate': "2021-08-10",
+    'dimensions': ["page","query"],    
+}
+
+df = seo.query_google_search_console_compare(key, site_url, payload_before, payload_after, fetch_all=False)
+df.sort_values(by='clicks_change', ascending=False).head()
+```
 
 
 #### 6. Get the number of "indexed" pages
