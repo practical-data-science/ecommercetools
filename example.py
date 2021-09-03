@@ -143,3 +143,25 @@ payload = {
 
 df = seo.query_google_search_console(key, site_url, payload, fetch_all=True)
 print(len(df))
+
+# =======================================================================
+# Compare two Google Search Console periods
+# =======================================================================
+
+payload_before = {
+    'startDate': "2021-08-11",
+    'endDate': "2021-08-31",
+    'dimensions': ["page","query"],
+}
+
+payload_after = {
+    'startDate': "2021-07-21",
+    'endDate': "2021-08-10",
+    'dimensions': ["page","query"],
+}
+
+df = seo.query_google_search_console_compare(key, site_url, payload_before, payload_after, fetch_all=False)
+print(df.sort_values(by='clicks_change', ascending=False).head())
+
+
+
