@@ -20,7 +20,7 @@ You can install EcommerceTools and its dependencies via PyPi by entering `pip3 i
 - [Marketing](#Marketing)
 - [NLP](#NLP)
 - [SEO](#SEO)
-
+- [Reports](#Reports)
 ---
 
 ### Transactions
@@ -2213,3 +2213,31 @@ print(serps)
 
 
 ---
+
+### Reports
+The Reports module creates weekly, monthly, quarterly, or yearly reports for customers and orders and calculates a range of common ecommerce metrics to show business performance.
+
+#### 1. Customers report
+The `customers_report()` function takes a formatted dataframe of transaction items (see above) and a desired frequency (D for daily, W for weekly, M for monthly, Q for quarterly) and calculates aggregate metrics for each period. 
+
+The function returns the number of orders, the number of customers, the number of new customers, the number of returning customers, and the acquisition rate (or proportion of new customers). For monthly reporting, I would recommend a 13-month period so you can compare the last month with the same month the previous year. 
+
+```python
+from ecommercetools import reports
+
+df_customers_report = reports.customers_report(transaction_items, frequency='M')
+print(df_customers_report.head(13))
+```
+
+#### 2. Transactions report
+The `transactions_report()` function takes a formatted dataframe of transaction items (see above) and a desired frequency (D for daily, W for weekly, M for monthly, Q for quarterly) and calculates aggregate metrics for each period. 
+
+The metrics returned are: customers, orders, revenue, SKUs, units, average order value, average SKUs per order, average units per order, and average revenue per customer. 
+
+```python
+from ecommercetools import reports
+
+df_orders_report = reports.transactions_report(transaction_items, frequency='M')
+print(df_orders_report.head(13))
+```
+

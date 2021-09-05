@@ -5,6 +5,7 @@ from ecommercetools import products
 from ecommercetools import customers
 from ecommercetools import operations
 from ecommercetools import seo
+from ecommercetools import reports
 
 # =======================================================================
 # Load sample data
@@ -163,5 +164,16 @@ payload_after = {
 df = seo.query_google_search_console_compare(key, site_url, payload_before, payload_after, fetch_all=False)
 print(df.sort_values(by='clicks_change', ascending=False).head())
 
+# =======================================================================
+# Load customers report
+# =======================================================================
 
+df_customers_report = reports.customers_report(transaction_items, frequency='M')
+print(df_customers_report.head(13))
 
+# =======================================================================
+# Load transactions report
+# =======================================================================
+
+df_orders_report = reports.transactions_report(transaction_items, frequency='M')
+print(df_orders_report.head(13))
