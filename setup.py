@@ -9,7 +9,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 setup(
     name='ecommercetools',
     packages=find_namespace_packages(include=['ecommercetools.*']),
-    version='0.40',
+    version='0.41',
     license='MIT',
     description='EcommerceTools is a data science toolkit for ecommerce, marketing science, and technical SEO.',
     long_description=long_description,
