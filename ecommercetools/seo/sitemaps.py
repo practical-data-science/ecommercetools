@@ -10,16 +10,14 @@ from bs4 import BeautifulSoup
 
 def _get_xml(url: str):
     """Scrapes an XML sitemap from the provided URL and returns XML source.
-
     Args:
         url (string): Fully qualified URL pointing to XML sitemap.
-
     Returns:
         xml (string): XML source of scraped sitemap.
     """
 
     try:
-        response = urllib.request.urlopen(url)
+        response = urllib.request.urlopen(Request(url, headers={'User-Agent': 'Mozilla'}))
         xml = BeautifulSoup(response,
                             'lxml-xml',
                             from_encoding=response.info().get_param('charset'))
