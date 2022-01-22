@@ -38,10 +38,13 @@ def _get_site_results(url: str):
         response (str): HTML of page.
     """
 
-    query = urllib.parse.quote_plus(url)
-    response = _get_source("https://www.google.co.uk/search?q=site%3A" + query)
+    try:
+        query = urllib.parse.quote_plus(url)
+        response = _get_source("https://www.google.co.uk/search?q=site%3A" + query)
 
-    return response
+        return response
+    except requests.exceptions.RequestException as e:
+        print(e)
 
 
 def _parse_site_results(response: str):
@@ -119,31 +122,72 @@ def _get_next_page(response, domain="google.co.uk"):
 
 
 def _parse_search_results(response):
-    css_identifier_result = ".tF2Cxc"
-    css_identifier_title = "h3"
-    css_identifier_link = ".yuRUbf a"
-    css_identifier_text = ".IsZvec"
+    """Parses the Google Search engine results and returns a list of results.
 
-    results = response.html.find(css_identifier_result)
+    Note: This function is obviously dependent upon the source code in the Google results.
+    Google obfuscates the source of the page to make it more difficult to extra information.
+    Extraction classes change from time to time, so there is always a likelihood that this
+    function will need to be adjusted with the new class or identifier details.
+    In the event of the function failing, please raise a GitHub issue.
 
-    output = []
+    Args:
+        response: Response object containing the page source code.
 
-    for result in results:
-        item = {
-            'title': result.find(css_identifier_title, first=True).text,
-            'link': result.find(css_identifier_link, first=True).attrs['href'],
-            'text': result.find(css_identifier_text, first=True).text
-        }
+    Returns:
+        list: List of Google search results.
+    """
 
-        output.append(item)
+    css_identifier_result = ".tF2Cxc"  # The class of the div containing each result, i.e. <div class="tF2Cxc">
+    css_identifier_title = "h3"  # The element containing the title, i.e. <h3 class="...
+    css_identifier_link = ".yuRUbf a"  # The class of the div containing the anchor, i.e. <div class="yuRUbf"><a ...
+    css_identifier_text = ".VwiC3b"  # The class of the parent element containing the snippet <span>
+    css_identifier_bold = ".VwiC3b span em"  # The class of the element containing the snippet <span><em>
 
-    return output
+    try:
+        results = response.html.find(css_identifier_result)
+
+        output = []
+
+        for result in results:
+
+            if result.find(css_identifier_text, first=True):
+                text = result.find(css_identifier_text, first=True).text
+            else:
+                text = ''
+
+            if result.find(css_identifier_title, first=True):
+                title = result.find(css_identifier_title, first=True).text
+            else:
+                title = ''
+
+            if result.find(css_identifier_link, first=True):
+                link = result.find(css_identifier_link, first=True).attrs['href']
+            else:
+                link = ''
+
+            if result.find(css_identifier_bold, first=True):
+                bold = result.find(css_identifier_bold, first=True).text.lower()
+            else:
+                bold = ''
+
+            item = {
+                'title': title,
+                'link': link,
+                'text': text,
+                'bold': bold,
+            }
+
+            output.append(item)
+
+        return output
+    except requests.exceptions.RequestException as e:
+        print(e)
 
 
 def get_serps(query: str,
-                        output="dataframe",
-                        pages=1,
-                        domain="google.co.uk"):
+              output="dataframe",
+              pages=1,
+              domain="google.co.uk"):
     """Return the Google search results for a given query.
 
     Args:
