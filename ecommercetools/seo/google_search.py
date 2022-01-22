@@ -165,6 +165,7 @@ def _parse_search_results(response):
             else:
                 link = ''
 
+            # Extract bold text
             if result.find(css_identifier_bold, first=True):
                 bold = result.find(css_identifier_bold, first=True).text.lower()
             else:
