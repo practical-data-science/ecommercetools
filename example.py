@@ -123,7 +123,7 @@ df = pd.DataFrame(list(zip(urls)), columns=['loc'])
 df_pages = seo.scraping.scrape_site(df)
 
 print(df_pages)
-"""
+
 
 # =======================================================================
 # Get SERPs
@@ -131,7 +131,17 @@ print(df_pages)
 
 results = seo.get_serps("bearded dragon brumation", pages=3)
 print(results)
+"""
 
+# =======================================================================
+# Get indexed pages
+# =======================================================================
+
+results = seo.get_indexed_pages(["https://www.bbc.co.uk",  # Millions
+                                 "https://www.practicaldatascience.co.uk",  # 1
+                                 "https://www.shj989uiskjdlksjd.com"  # None
+                                 ])
+print(results)
 exit()
 
 # =======================================================================

@@ -2,6 +2,7 @@
 General functions for scraping data from Google search engine results pages.
 """
 
+import re
 import requests
 import urllib.parse
 import pandas as pd
@@ -22,8 +23,15 @@ def _get_source(url: str):
     try:
         session = HTMLSession()
         response = session.get(url)
-        return response
 
+        if response.status_code == 200:
+            return response
+        elif response.status_code == 429:
+            print('Error: Too many requests. Google has temporarily blocked you. Try again later.')
+            exit()
+        else:
+            print('Error:' + response)
+            exit()
     except requests.exceptions.RequestException as e:
         print(e)
 
@@ -57,9 +65,23 @@ def _parse_site_results(response: str):
         indexed: Number of pages "indexed".
     """
 
-    string = response.html.find("#result-stats", first=True).text
-    indexed = int(string.split(' ')[1].replace(',', ''))
-    return indexed
+    try:
+        if response.html.find("#result-stats", first=True):
+
+            string = response.html.find("#result-stats", first=True).text
+            if string:
+                # Remove values in paretheses, i.e. (0.31 seconds)
+                string = re.sub(r'\([^)]*\)', '', string)
+
+                # Remove non-numeric characters
+                string = re.sub('[^0-9]', '', string)
+
+                return string
+            else:
+                return 0
+    except requests.exceptions.RequestException as e:
+        print(e)
+
 
 
 def _count_indexed_pages(url: str):
