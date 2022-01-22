@@ -9,9 +9,9 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 setup(
     name='ecommercetools',
     packages=find_namespace_packages(include=['ecommercetools.*']),
-    version='0.42',
+    version='0.42.2',
     license='MIT',
-    description='EcommerceTools is a data science toolkit for ecommerce, marketing science, and technical SEO.',
+    description='EcommerceTools is a data science toolkit for ecommerce, marketing science, and Python SEO.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Matt Clarke',
@@ -19,7 +19,7 @@ setup(
     url='https://github.com/practical-data-science/ecommercetools',
     download_url='https://github.com/practical-data-science/ecommercetools/archive/master.zip',
     keywords=['ecommerce', 'marketing', 'seo', 'seo testing', 'customers', 'products', 'rfm', 'abc',
-              'operations', 'analytics', 'python', 'pandas', 'nlp', 'causal impact'],
+              'operations', 'analytics', 'python', 'python seo', 'pandas', 'nlp', 'causal impact'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

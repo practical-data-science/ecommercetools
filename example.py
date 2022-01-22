@@ -7,6 +7,9 @@ from ecommercetools import operations
 from ecommercetools import seo
 from ecommercetools import reports
 
+"""
+
+
 # =======================================================================
 # Load sample data
 # =======================================================================
@@ -121,12 +124,25 @@ df_pages = seo.scraping.scrape_site(df)
 
 print(df_pages)
 
+
 # =======================================================================
 # Get SERPs
 # =======================================================================
 
-results = seo.get_serps("data science courses", pages=5)
+results = seo.get_serps("bearded dragon brumation", pages=3)
 print(results)
+"""
+
+# =======================================================================
+# Get indexed pages
+# =======================================================================
+
+results = seo.get_indexed_pages(["https://www.bbc.co.uk",  # Millions
+                                 "https://www.practicaldatascience.co.uk",  # 1
+                                 "https://www.shj989uiskjdlksjd.com"  # None
+                                 ])
+print(results)
+exit()
 
 # =======================================================================
 # Get all Google Search Console data
@@ -152,7 +168,7 @@ print(len(df))
 payload_before = {
     'startDate': "2021-08-11",
     'endDate': "2021-08-31",
-    'dimensions': ["page","query"],
+    'dimensions': ["page", "query"],
 }
 
 payload_after = {
