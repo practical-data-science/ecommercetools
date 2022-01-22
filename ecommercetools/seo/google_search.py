@@ -83,7 +83,6 @@ def _parse_site_results(response: str):
         print(e)
 
 
-
 def _count_indexed_pages(url: str):
     """Gets the site:url data, parses the response, and returns the number of "indexed" pages.
 
