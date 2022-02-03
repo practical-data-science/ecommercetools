@@ -17,7 +17,7 @@ def _get_xml(url: str):
     """
 
     try:
-        response = urllib.request.urlopen(Request(url, headers={'User-Agent': 'Mozilla'}))
+        response = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla'}))
         xml = BeautifulSoup(response,
                             'lxml-xml',
                             from_encoding=response.info().get_param('charset'))
