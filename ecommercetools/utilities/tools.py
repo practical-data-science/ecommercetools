@@ -23,7 +23,7 @@ def load_transaction_items(filename,
         unit_price_column (float, optional): Name of unit price column, default is unit_price
 
     Usage:
-        transaction_items = rt.load_data('data/input/transaction_items_non_standard_names.csv',
+        transaction_items = rt.load_transaction_items('data/input/transaction_items_non_standard_names.csv',
                                      date_column='InvoiceDate',
                                      order_id_column='OrderId',
                                      customer_id_column='CustomerId',

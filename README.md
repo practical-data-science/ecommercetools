@@ -117,13 +117,13 @@ transaction_items.head()
 
 2. #### Create a transaction items dataframe
 
-The `utilities` module includes a range of tools that allow you to format data, so it can be used within other EcommerceTools functions. The `load_data()` function is used to create a Pandas dataframe of formatted transactional item data. When loading your transaction items data, all you need to do is define the column mappings, and the function will reformat the dataframe accordingly. 
+The `utilities` module includes a range of tools that allow you to format data, so it can be used within other EcommerceTools functions. The `load_transaction_items()` function is used to create a Pandas dataframe of formatted transactional item data. When loading your transaction items data, all you need to do is define the column mappings, and the function will reformat the dataframe accordingly. 
 
 ```python
 import pandas as pd
 from ecommercetools import utilities
 
-transaction_items = utilities.load_data('transaction_items_non_standard_names.csv',
+transaction_items = utilities.load_transaction_items('transaction_items_non_standard_names.csv',
                                  date_column='InvoiceDate',
                                  order_id_column='InvoiceNo',
                                  customer_id_column='CustomerID',
