@@ -131,7 +131,7 @@ print(df_pages)
 
 results = seo.get_serps("bearded dragon brumation", pages=3)
 print(results)
-"""
+
 
 # =======================================================================
 # Get indexed pages
@@ -193,3 +193,6 @@ print(df_customers_report.head(13))
 
 df_orders_report = reports.transactions_report(transaction_items, frequency='M')
 print(df_orders_report.head(13))
+
+"""
+
