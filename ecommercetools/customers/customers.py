@@ -20,12 +20,11 @@ def get_customers(transaction_items):
         customers: Pandas DataFrame containing customers
     """
 
-    transactions_df = transactions.get_transactions(transaction_items)
-    customers = transactions_df.groupby('customer_id').agg(
-        revenue=('revenue', 'sum'),
+    customers = transaction_items.groupby('customer_id').agg(
+        revenue=('line_price', 'sum'),
         orders=('order_id', 'nunique'),
-        skus=('skus', 'nunique'),
-        items=('items', 'sum'),
+        skus=('sku', 'nunique'),
+        items=('quantity', 'sum'),
         first_order_date=('order_date', 'min'),
         last_order_date=('order_date', 'max')
     ).reset_index()
