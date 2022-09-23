@@ -48,7 +48,7 @@ def _get_site_results(url: str):
 
     try:
         query = urllib.parse.quote_plus(url)
-        response = _get_source("https://www.google.co.uk/search?q=site%3A" + query)
+        response = _get_source("https://www.google.co.uk/search?q=site%3A" + query + "&num=100")
 
         return response
     except requests.exceptions.RequestException as e:
@@ -127,7 +127,7 @@ def _get_results(query: str):
     """
 
     query = urllib.parse.quote_plus(query)
-    response = _get_source("https://www.google.co.uk/search?q=" + query)
+    response = _get_source("https://www.google.co.uk/search?q=" + query + "&num=100")
 
     return response
 
