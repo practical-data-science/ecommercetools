@@ -194,5 +194,20 @@ print(df_customers_report.head(13))
 df_orders_report = reports.transactions_report(transaction_items, frequency='M')
 print(df_orders_report.head(13))
 
-"""
 
+# =======================================================================
+# Classify Google Search Console data using ABCD
+# =======================================================================
+
+key = "pds-client-secrets.json"
+site_url = "sc-domain:practicaldatascience.co.uk"
+start_date = '2022-10-01'
+end_date = '2022-10-31'
+
+df_classes = seo.classify_pages(key, site_url, start_date, end_date, output='classes')
+print(df_classes.head())
+
+df_summary = seo.classify_pages(key, site_url, start_date, end_date, output='summary')
+print(df_summary)
+
+"""

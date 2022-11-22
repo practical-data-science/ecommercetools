@@ -2212,6 +2212,44 @@ print(serps)
 </table>
 
 
+#### Create an ABCD classification of Google Search Console data
+The `classify_pages()` function returns an ABCD classification of Google Search Console data. This calculates the cumulative sum of clicks and then categorises pages using the ABC algorithm (the first 80% are classed A, the next 10% are classed B, and the final 10% are classed C, with the zero click pages classed D). 
+
+
+
+
+```python
+from ecommercetools import seo
+
+key = "client_secrets.json"
+site_url = "example-domain.co.uk"
+start_date = '2022-10-01'
+end_date = '2022-10-31'
+
+df_classes = seo.classify_pages(key, site_url, start_date, end_date, output='classes')
+print(df_classes.head())
+
+df_summary = seo.classify_pages(key, site_url, start_date, end_date, output='summary')
+print(df_summary)
+
+```
+
+                                                    page  clicks  impressions    ctr  position  clicks_cumsum  clicks_running_pc  pc_share class  class_rank
+    0  https://practicaldatascience.co.uk/machine-lea...    3890        36577  10.64     12.64           3890           8.382898  8.382898     A           1
+    1  https://practicaldatascience.co.uk/data-scienc...    2414        16618  14.53     14.30           6304          13.585036  5.202138     A           2
+    2  https://practicaldatascience.co.uk/data-scienc...    2378        71496   3.33     16.39           8682          18.709594  5.124558     A           3
+    3  https://practicaldatascience.co.uk/data-scienc...    1942        14274  13.61     15.02          10624          22.894578  4.184984     A           4
+    4  https://practicaldatascience.co.uk/data-scienc...    1738        23979   7.25     11.80          12362          26.639945  3.745367     A           5
+      
+
+    class  pages  impressions  clicks   avg_ctr  avg_position  share_of_clicks  share_of_impressions
+    0     A     63       747643   36980  5.126349     22.706825             79.7                  43.7
+    1     B     46       639329    4726  3.228043     31.897826             10.2                  37.4
+    2     C    190       323385    4698  2.393632     38.259368             10.1                  18.9
+    3     D     36         1327       0  0.000000     25.804722              0.0                   0.1
+
+
+
 ---
 
 ### Reports

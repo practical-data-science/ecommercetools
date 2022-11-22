@@ -204,3 +204,94 @@ def query_google_search_console_compare(key, site_url, payload_before, payload_a
         df.columns = df.columns.str.replace('device_before', 'device')
 
         return df
+
+def abcd(df):
+    """Assign an ABCD class and rank to a metric based on cumulative percentage contribution.
+
+        Args:
+            df: Pandas dataframe containing data.
+
+        Return:
+            Pandas dataframe containing original data, plus the metric class and rank.
+        """
+
+    def _assign_class(percentage):
+        """Assign an ABCD class based on cumulative percentage contribution.
+        Args:
+            percentage (float): Cumulative percentage of ranked metric.
+        Returns:
+            segments: Pandas DataFrame
+        """
+
+        if 0 < percentage <= 80:
+            return 'A'
+        elif 80 < percentage <= 90:
+            return 'B'
+        elif 90 < percentage < 100:
+            return 'C'
+        else:
+            return 'D'
+
+    data = df.sort_values(by='clicks', ascending=False)
+    data['clicks_cumsum'] = data['clicks'].cumsum()
+    data['clicks_running_pc'] = (data['clicks_cumsum'] / data['clicks'].sum()) * 100
+    data['pc_share'] = (data['clicks'] / data['clicks'].sum()) * 100
+    data['class'] = data['clicks_running_pc'].apply(_assign_class)
+    data['class_rank'] = data['clicks_running_pc'].rank().astype(int)
+    data.loc[(data['class'] == 'D') & (data['clicks'] > 0), 'class'] = 'C'
+    return data
+
+
+def abcd_summary(df):
+    """Return a summary of the ABCD classification of Google Search Console page data.
+
+    Args:
+        df: Pandas dataframe containing data from adcd() function.
+    Return:
+        Pandas dataframe containing summary of ABCD classification.
+    """
+
+    df_summary = df.groupby('class').agg(
+        pages=('page', 'nunique'),
+        impressions=('impressions', 'sum'),
+        clicks=('clicks', 'sum'),
+        avg_ctr=('ctr', 'mean'),
+        avg_position=('position', 'mean')
+    ).reset_index()
+
+    df_summary['share_of_clicks'] = round((df_summary['clicks'] / df_summary['clicks'].sum()) * 100, 1)
+    df_summary['share_of_impressions'] = round((df_summary['impressions'] / df_summary['impressions'].sum()) * 100, 1)
+    df_summary[['class', 'share_of_clicks', 'share_of_impressions',
+                'pages', 'impressions', 'clicks', 'avg_ctr', 'avg_position']]
+    return df_summary
+
+def classify_pages(key, site_url, start_date, end_date, output='classes'):
+    """Classify pages using ABCD based on their cumulative percentage contribution to clicks.
+
+    Args:
+        key (str): Path to Google Search Console API key.
+        site_url (str): Google Search Console site URL.
+        start_date (str): Start date for data.
+        end_date (str): End date for data.
+        output (str): Output format. Options are 'classes' or 'summary'.
+
+    Returns:
+        Pandas DataFrame
+    """
+
+    payload = {
+        'startDate': start_date,
+        'endDate': end_date,
+        'dimensions': ["page"],
+        'rowLimit': 25000,
+        'startRow': 0
+    }
+
+    df_gsc = query_google_search_console(key, site_url, payload, fetch_all=True)
+    df_classes = abcd(df_gsc)
+    df_summary = abcd_summary(df_classes)
+
+    if output == 'classes':
+        return df_classes
+    else:
+        return df_summary
