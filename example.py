@@ -198,7 +198,7 @@ print(df_orders_report.head(13))
 # =======================================================================
 # Classify Google Search Console data using ABCD
 # =======================================================================
-
+"""
 key = "pds-client-secrets.json"
 site_url = "sc-domain:practicaldatascience.co.uk"
 start_date = '2022-10-01'
@@ -211,4 +211,3 @@ df_summary = seo.classify_pages(key, site_url, start_date, end_date, output='sum
 print(df_summary)
 
 
-"""
