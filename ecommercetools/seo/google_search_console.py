@@ -259,9 +259,11 @@ def abcd_summary(df):
         avg_position=('position', 'mean')
     ).reset_index()
 
-    df_summary['share_of_clicks'] = round((df_summary['clicks'] / df_summary['clicks'].sum()) * 100, 1)
-    df_summary['share_of_impressions'] = round((df_summary['impressions'] / df_summary['impressions'].sum()) * 100, 1)
-    df_summary[['class', 'share_of_clicks', 'share_of_impressions',
+    df_summary['pc_clicks'] = round((df_summary['clicks'] / df_summary['clicks'].sum()) * 100, 1)
+    df_summary['pc_impressions'] = round((df_summary['impressions'] / df_summary['impressions'].sum()) * 100, 1)
+    df_summary['pc_pages'] = round((df_summary['pages'] / df_summary['pages'].sum()) * 100, 1)
+
+    df_summary[['class', 'pc_pages', 'pc_clicks', 'pc_impressions',
                 'pages', 'impressions', 'clicks', 'avg_ctr', 'avg_position']]
     return df_summary
 
