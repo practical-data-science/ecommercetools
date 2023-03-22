@@ -2211,6 +2211,13 @@ print(serps)
   </tbody>
 </table>
 
+To set the domain and host language you can use these parameters. This will search for "bmw" on the German Google domain and return the results in German.
+
+```python
+df = seo.get_serps("bmw", pages=1, domain="google.de", host_language="de")
+```
+
+
 
 #### Create an ABCD classification of Google Search Console data
 The `classify_pages()` function returns an ABCD classification of Google Search Console data. This calculates the cumulative sum of clicks and then categorises pages using the ABC algorithm (the first 80% are classed A, the next 10% are classed B, and the final 10% are classed C, with the zero click pages classed D). 

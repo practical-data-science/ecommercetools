@@ -36,11 +36,13 @@ def _get_source(url: str):
         print(e)
 
 
-def _get_site_results(url: str):
+def _get_site_results(url: str, domain="google.co.uk", hl="en"):
     """Return the source of a site:url search.
 
     Args:
         url: URL of page to append to site: query
+        domain: Google domain to use (default is google.co.uk)
+        hl: Language to use (default is English)
 
     Returns:
         response (str): HTML of page.
@@ -48,7 +50,7 @@ def _get_site_results(url: str):
 
     try:
         query = urllib.parse.quote_plus(url)
-        response = _get_source("https://www.google.co.uk/search?q=site%3A" + query + "&num=100")
+        response = _get_source("https://www."+ domain + "/search?q=site%3A" + query + "&num=100" + "&hl=" + hl)
 
         return response
     except requests.exceptions.RequestException as e:
@@ -116,28 +118,41 @@ def get_indexed_pages(urls: list):
     return df
 
 
-def _get_results(query: str):
+def _get_results(query: str, domain="google.co.uk", hl="en"):
     """Return the source of a search.
 
     Args:
         query: Search query term.
+        domain: Google domain to use (default is google.co.uk)
+        hl: Language to use (default is English)
 
     Returns:
         response (str): HTML of page.
     """
 
     query = urllib.parse.quote_plus(query)
-    response = _get_source("https://www.google.co.uk/search?q=" + query + "&num=100")
+    url = "https://www." + domain + "/search?q=" + query + "&num=100" + "&hl=" + hl
+    response = _get_source(url)
 
     return response
 
 
-def _get_next_page(response, domain="google.co.uk"):
-    """Get the URL for the next page of results."""
+def _get_next_page(response, domain="google.co.uk", hl="en"):
+    """Get the URL for the next page of results.
+
+    Args:
+        response: HTML of page.
+        domain: Google domain to use (default is google.co.uk)
+        hl: Language to use (default is English)
+
+    Returns:
+        url (str): URL of next page of results.
+
+    """
 
     css_identifier_next = "#pnnext"
     next_page_url = response.html.find(css_identifier_next, first=True).attrs['href']
-    next_page = "https://www." + domain + next_page_url
+    next_page = "https://www." + domain + next_page_url + "&hl=" + hl
 
     return next_page
 
@@ -209,7 +224,8 @@ def _parse_search_results(response):
 def get_serps(query: str,
               output="dataframe",
               pages=1,
-              domain="google.co.uk"):
+              domain="google.co.uk",
+              host_language="en"):
     """Return the Google search results for a given query.
 
     Args:
@@ -217,14 +233,23 @@ def get_serps(query: str,
         output (string, optional): Optional output format (dataframe or dictionary).
         pages (int, optional): Optional number of pages to return.
         domain (string, optional): Optional Google domain (default is google.co.uk).
+        host_language (string, optional): Optional host_language (default is en).
 
     Returns:
         results (dict): Results of query.
     """
 
-    response = _get_results(query)
+    if domain not in ["google.co.uk", "google.com", "google.co.in", "google.com.au", "google.com.br", "google.ca",
+                      "google.com.mx", "google.co.nz", "google.com.ph", "google.pl", "google.com.sa", "google.com.sg",
+                        "google.co.za", "google.es", "google.fr", "google.de", "google.it", "google.co.jp", "google.com.tw",
+                        "google.com.tr", "google.com.vn"]:
+        raise ValueError("Domain must be a valid Google domain in the format of google.co.uk or google.com")
+    else:
+        pass
+
+    response = _get_results(query, domain=domain, hl=host_language)
     results = _parse_search_results(response)
-    next_page = _get_next_page(response)
+    next_page = _get_next_page(response, domain=domain, hl=host_language)
 
     page = 1
     while page <= pages:
