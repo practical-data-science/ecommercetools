@@ -220,7 +220,7 @@ The `get_transactions()` function takes the formatted Pandas dataframe of transa
 
 ```python
 import pandas as pd
-from ecommercetools import customers
+from ecommercetools import transactions
 
 transaction_items = pd.read_csv('transaction_items.csv')
 transactions = transactions.get_transactions(transaction_items)
