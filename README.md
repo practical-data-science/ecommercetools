@@ -223,7 +223,7 @@ import pandas as pd
 from ecommercetools import customers
 
 transaction_items = pd.read_csv('transaction_items.csv')
-transactions = customers.get_transactions(transaction_items)
+transactions = transactions.get_transactions(transaction_items)
 transactions.to_csv('transactions.csv', index=False)
 print(transactions.head())
 ```
