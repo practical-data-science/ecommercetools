@@ -29,7 +29,7 @@ setup(
     ],
     install_requires=['pandas',
                       'gapandas',
-                      'sklearn',
+                      'scikit-learn',
                       'requests',
                       'requests_html',
                       'httplib2 >= 0.15.0',
